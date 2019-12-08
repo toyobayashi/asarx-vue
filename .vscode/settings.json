@@ -1,0 +1,16 @@
+{
+  "eslint.autoFixOnSave": false,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    { "language": "typescript", "autoFix": true },
+    { "language": "typescriptreact", "autoFix": true },
+    { "language": "vue", "autoFix": true },
+    "html"
+  ],
+  "stylusSupremacy.insertColons": false,
+  "stylusSupremacy.insertSemicolons": false,
+  "stylusSupremacy.insertBraces": false,
+  "stylusSupremacy.insertNewLineAroundImports": false,
+  "stylusSupremacy.insertNewLineAroundBlocks": false
+}
