@@ -5,8 +5,15 @@ export function setAsarPath (path: string): void {
   store.commit(Types.SET_ASAR_PATH, path)
 }
 
+export function setTree (tree: AsarNode): void {
+  store.commit(Types.SET_TREE, tree)
+}
+
 export const getters = {
-  asarPath () {
+  asarPath (): string {
     return store.state.asarPath
+  },
+  tree (): AsarNode {
+    return store.state.tree
   }
 }

@@ -62,13 +62,13 @@ class WindowManager {
 
     if (!('icon' in browerWindowOptions)) {
       if (process.platform === 'linux') {
-        const linuxIcon = join(__dirname, '../../icon/app.png')
+        const linuxIcon = join(__dirname, '../../assets/icon/app.png')
         if (existsSync(linuxIcon)) {
           browerWindowOptions.icon = nativeImage.createFromPath(linuxIcon)
         }
       } else {
         if (process.env.NODE_ENV !== 'production') {
-          const iconPath = join(__dirname, `../../../icon/app.${process.platform === 'win32' ? 'ico' : 'icns'}`)
+          const iconPath = join(__dirname, `../../../assets/icon/app.${process.platform === 'win32' ? 'ico' : 'icns'}`)
           if (existsSync(iconPath)) {
             browerWindowOptions.icon = nativeImage.createFromPath(iconPath)
           }

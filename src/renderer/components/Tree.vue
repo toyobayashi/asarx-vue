@@ -7,7 +7,7 @@
       class="tree-item"
       :class="{ active: item._active, root: item.indent === 0, open: item._open }"
       :style="{ paddingLeft: item.indent ? item.indent + 'px' : void 0 }"
-    >{{title}}</div>
+    >{{item.title}}</div>
   </div>
 </template>
 
@@ -34,15 +34,15 @@
     width 16px
     vertical-align text-bottom
     margin-right 5px
-    background-image url('../../res/img/Folder_16x.svg')
+    background-image url('../../../assets/images/Folder_16x.svg')
 .tree-item.active, .tree-item.active:hover
   background #126ce1
   color #fff
 
 .tree-item.open::before
-  background-image url('../../res/img/FolderOpen_16x.svg')
+  background-image url('../../../assets/images/FolderOpen_16x.svg')
 .tree-item.root::before
-  background-image url('../../res/img/RootFolder_16x.svg')
+  background-image url('../../../assets/images/RootFolder_16x.svg')
 .tree-item.root.open::before
-  background-image url('../../res/img/RootFolderOpen_16x.svg')
+  background-image url('../../../assets/images/RootFolderOpen_16x.svg')
 </style>

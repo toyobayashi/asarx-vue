@@ -1,6 +1,8 @@
 import { join } from 'path'
+import { Configuration } from '@tybys/ty'
 
-export default {
+const config: Configuration = {
+  iconSrcDir: join(__dirname, 'assets/icon'),
   inno: {
     src: join(__dirname, 'scripts/asarx.iss'),
     appid: {
@@ -10,3 +12,5 @@ export default {
     url: 'https://github.com/toyobayashi/asarx-vue'
   }
 }
+
+export default config

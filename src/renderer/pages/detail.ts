@@ -1,27 +1,84 @@
 import Vue from 'vue'
-import { extname } from 'path'
+import { extname, basename } from 'path'
 import { remote } from 'electron'
 import { openFile } from '../utils'
-import { setAsarPath, getters } from '../store/export'
+import { setAsarPath, getters, setTree } from '../store/export'
+import Tree from '../components/Tree.vue'
 
 export default Vue.extend({
+  components: {
+    Tree
+  },
   data () {
     return {
+      point: null
     }
   },
   computed: {
-    ...getters
+    ...getters,
+    title (): string {
+      return basename(this.asarPath || '')
+    }
   },
   methods: {
+    onMouseMove () {
+      // todo
+    },
+    onMouseUp () {
+      // todo
+    },
+    onItemClicked () {
+      // todo
+    },
     async open () {
       const path = await openFile()
       if (!path) return
       if (extname(path) === '.asar') {
         setAsarPath(path)
-        // this.readHeader()
+        this.readHeader()
       } else {
         alert('Not an asar file.')
       }
+    },
+    readHeader () {
+      // if (this.asarPath) {
+      // this._asar.load(this.props.asarPath)
+      // this.props.setTree && this.props.setTree(this._asar.header)
+      // this._onItemClicked(this._asar.header)
+      // } else {
+      setTree({
+        files: {
+          folder1: {
+            files: {
+              file1: {
+                size: 80,
+                offset: '0'
+              },
+              file2: {
+                size: 40,
+                offset: '80'
+              },
+              file3: {
+                size: 233,
+                unpacked: true
+              }
+            }
+          },
+          folder2: {
+            files: {
+              file4: {
+                size: 20,
+                offset: '120'
+              }
+            }
+          },
+          file5: {
+            size: 100,
+            offset: '140'
+          }
+        }
+      })
+      // }
     },
     goback () {
       this.$router.back()

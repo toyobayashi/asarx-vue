@@ -7,6 +7,11 @@
       <button class="menu-button" @click="openAboutDialog">About</button>
       <button class="menu-button" @click="openGithub">Github</button>
     </div>
+    <div class="content" :class="{ resize: point }" @mousemove="onMouseMove" @mouseup="onMouseUp">
+      <div class="tree-view">
+        <Tree :value="tree" :title="title" :hide-file="false" @itemClick="onItemClicked" />
+      </div>
+    </div>
     <div>{{asarPath}}</div>
   </div>
 </template>
@@ -36,4 +41,22 @@
       background rgba(0, 0, 0, 0.2)
     &:active
       background rgba(0, 0, 0, 0.4)
+.tree-view
+  background-color rgb(243, 243, 243)
+  height 100%
+  overflow auto
+  box-sizing border-box
+  border 1px solid #fff
+.content
+  display flex
+  justify-content space-between
+  height calc(100% - 70px)
+  .resize
+    cursor ew-resize
+  >.resize
+    width 4px
+    height 100%
+    position absolute
+    cursor ew-resize
+    top 0
 </style>
