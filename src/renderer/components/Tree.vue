@@ -1,0 +1,48 @@
+<template>
+  <div class="tree">
+    <div
+      v-for="item in renderList"
+      :key="item.key"
+      @click="onItemClicked"
+      class="tree-item"
+      :class="{ active: item._active, root: item.indent === 0, open: item._open }"
+      :style="{ paddingLeft: item.indent ? item.indent + 'px' : void 0 }"
+    >{{title}}</div>
+  </div>
+</template>
+
+<script lang="ts" src="./tree.ts">
+</script>
+
+<style lang="stylus" scoped>
+.tree-item
+  font-size 13px
+  height 22px
+  line-height 22px
+  color #616161
+  cursor pointer
+  white-space nowrap
+  text-overflow ellipsis
+  width 100%
+  overflow hidden
+  &:hover
+    background #e8e8e8
+  &::before
+    display inline-block
+    content ''
+    height 16px
+    width 16px
+    vertical-align text-bottom
+    margin-right 5px
+    background-image url('../../res/img/Folder_16x.svg')
+.tree-item.active, .tree-item.active:hover
+  background #126ce1
+  color #fff
+
+.tree-item.open::before
+  background-image url('../../res/img/FolderOpen_16x.svg')
+.tree-item.root::before
+  background-image url('../../res/img/RootFolder_16x.svg')
+.tree-item.root.open::before
+  background-image url('../../res/img/RootFolderOpen_16x.svg')
+</style>
