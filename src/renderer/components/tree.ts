@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import * as ObjectId from '@tybys/oid'
+import { getObjectId } from '../utils/ipc'
 
 export default Vue.extend({
   props: {
@@ -25,10 +25,10 @@ export default Vue.extend({
     renderNode (title: string, asarNode: AsarNode, indent: number) {
       const node: AsarNode = asarNode || { files: {} }
       let items: any[] = []
-      if (!this.hideFile) items.push({ title: title, data: node, indent: indent, key: (new ObjectId()).toHexString() })
+      if (!this.hideFile) items.push({ title: title, data: node, indent: indent, key: getObjectId() })
       if (node.files) {
         if (this.hideFile) {
-          items.push({ title: title, data: node, indent: indent, key: (new ObjectId()).toHexString() })
+          items.push({ title: title, data: node, indent: indent, key: getObjectId() })
         }
         if (node._open) {
           items = [...items, ...resolveArray(Object.keys(node.files).map(item => this.renderNode(item, (node.files as any)[item], indent + 8)))]
