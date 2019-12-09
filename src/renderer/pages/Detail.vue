@@ -8,9 +8,10 @@
       <button class="menu-button" @click="openGithub">Github</button>
     </div>
     <div class="content" :class="{ resize: point }" @mousemove="onMouseMove" @mouseup="onMouseUp">
-      <div class="tree-view">
-        <Tree :value="tree" :title="title" :hide-file="false" @itemClick="onItemClicked" />
+      <div class="tree-view" :style="{ width: this.treeWidth + 'px' }">
+        <Tree :value="tree" :title="title" :hideFile="false" @itemClick="onItemClicked" />
       </div>
+      <div class="resize" :style="{ left: `${this.treeWidth - 4}px` }" @mousedown="onMouseDown"></div>
     </div>
     <div>{{asarPath}}</div>
   </div>
@@ -51,12 +52,12 @@
   display flex
   justify-content space-between
   height calc(100% - 70px)
-  .resize
-    cursor ew-resize
   >.resize
     width 4px
     height 100%
     position absolute
     cursor ew-resize
     top 0
+.content.resize
+  cursor ew-resize
 </style>

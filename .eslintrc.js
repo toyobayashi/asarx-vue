@@ -22,7 +22,17 @@ module.exports = {
     '@typescript-eslint/no-this-alias': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-namespace': 'off',
-    'standard/no-callback-literal': 'off'
+    'standard/no-callback-literal': 'off',
+    '@typescript-eslint/member-delimiter-style': ['error', {
+      multiline: {
+        delimiter: 'none',
+        requireLast: true
+      },
+      singleline: {
+        delimiter: 'semi',
+        requireLast: false
+      }
+    }]
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',

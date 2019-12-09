@@ -3,9 +3,9 @@
     <div
       v-for="item in renderList"
       :key="item.key"
-      @click="onItemClicked"
+      @click="onItemClicked(item)"
       class="tree-item"
-      :class="{ active: item._active, root: item.indent === 0, open: item._open }"
+      :class="{ active: item.data._active, root: item.indent === 0, open: item.data._open }"
       :style="{ paddingLeft: item.indent ? item.indent + 'px' : void 0 }"
     >{{item.title}}</div>
   </div>
@@ -23,7 +23,6 @@
   cursor pointer
   white-space nowrap
   text-overflow ellipsis
-  width 100%
   overflow hidden
   &:hover
     background #e8e8e8

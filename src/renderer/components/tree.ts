@@ -32,14 +32,14 @@ export default Vue.extend({
         if (this.hideFile) {
           items.push({ title: title, data: node, indent: indent, key: getObjectId() })
         }
-        // if (node._open) {
-        items = [...items, ...resolveArray(Object.keys(node.files).map(item => this.renderNode(item, (node.files as any)[item], indent + 8)))]
-        // }
+        if (node._open) {
+          items = [...items, ...resolveArray(Object.keys(node.files).map(item => this.renderNode(item, (node.files as any)[item], indent + 8)))]
+        }
       }
       return items
     },
-    onItemClicked () {
-      // todo
+    onItemClicked (item: TreeItem) {
+      this.$emit('itemClick', item)
     }
   }
 })

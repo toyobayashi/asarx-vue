@@ -2,17 +2,23 @@ import Vue from 'vue'
 import { extname, basename } from 'path'
 import { remote } from 'electron'
 import { openFile } from '../utils'
-import { setAsarPath, getters, setTree } from '../store/export'
+import { setAsarPath, getters, setTree, clickTree } from '../store/export'
 import Tree from '../components/Tree.vue'
+import fakeHeader from '../mocks/header'
 
 export default Vue.extend({
   components: {
     Tree
   },
   data () {
-    return {
-      point: null
+    const data: {
+      point: null | [number, number]
+      treeWidth: number
+    } = {
+      point: null,
+      treeWidth: 200
     }
+    return data
   },
   computed: {
     ...getters,
@@ -21,14 +27,41 @@ export default Vue.extend({
     }
   },
   methods: {
-    onMouseMove () {
-      // todo
+    onMouseMove (e: MouseEvent) {
+      if (this.point) {
+        const x = e.pageX
+        let target: any = e.target
+        while (target && !target.classList.contains('content')) {
+          target = target.parentNode
+        }
+        if (!target) return
+        const targetLeft = target.offsetLeft as number
+        const left = this.point[0] - targetLeft
+        const newWidth = left + x - this.point[0]
+        this.treeWidth = newWidth < 100 ? 100 : (newWidth > 250 ? 250 : newWidth)
+      }
     },
     onMouseUp () {
-      // todo
+      if (this.point) {
+        this.point = null
+      }
     },
-    onItemClicked () {
+    onMouseDown (e: MouseEvent) {
+      if (!this.point) {
+        this.point = [e.pageX, e.pageY]
+      }
+    },
+    onItemClicked (item: TreeItem) {
       // todo
+      clickTree(item.data)
+      // Asar.each(this.tree, (n) => {
+      //   this.$set(n, '_active', false)
+      // }, '/')
+      // if (item.data.files) {
+      //   this.$set(item.data, '_open', !item.data._open)
+      // }
+      // this.$set(item.data, '_active', true)
+      // console.log(item)
     },
     async open () {
       const path = await openFile()
@@ -46,38 +79,7 @@ export default Vue.extend({
       // this.props.setTree && this.props.setTree(this._asar.header)
       // this._onItemClicked(this._asar.header)
       // } else {
-      setTree({
-        files: {
-          folder1: {
-            files: {
-              file1: {
-                size: 80,
-                offset: '0'
-              },
-              file2: {
-                size: 40,
-                offset: '80'
-              },
-              file3: {
-                size: 233,
-                unpacked: true
-              }
-            }
-          },
-          folder2: {
-            files: {
-              file4: {
-                size: 20,
-                offset: '120'
-              }
-            }
-          },
-          file5: {
-            size: 100,
-            offset: '140'
-          }
-        }
-      })
+      setTree(fakeHeader)
       // }
     },
     goback () {

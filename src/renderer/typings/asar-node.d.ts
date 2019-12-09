@@ -12,3 +12,10 @@ declare interface AsarNode {
   executable?: boolean
   link?: string
 }
+
+declare interface IAsar {
+  src: string
+  header: AsarNode
+  headerSize: number
+  fd?: number
+}
