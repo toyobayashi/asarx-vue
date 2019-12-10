@@ -9,7 +9,7 @@
     </div>
     <div class="content" :class="{ resize: point }" @mousemove="onMouseMove" @mouseup="onMouseUp">
       <div class="tree-view" :style="{ width: this.treeWidth + 'px' }">
-        <Tree v-model="tree" :title="title" :hideFile="false" @itemClick="onItemClicked" />
+        <Tree :value="tree" :title="title" :hideFile="false" @itemClick="onItemClicked" />
       </div>
       <div class="resize" :style="{ left: `${this.treeWidth - 4}px` }" @mousedown="onMouseDown"></div>
     </div>

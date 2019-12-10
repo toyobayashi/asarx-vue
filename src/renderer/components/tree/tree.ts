@@ -20,10 +20,24 @@ export default Vue.extend({
       default: false
     }
   },
+  data () {
+    return {
+      copiedValue: JSON.parse(JSON.stringify(this.value))
+    }
+  },
   computed: {
     renderList (): TreeItem[] {
-      const items = this.renderNode('/', this.value, 0)
+      const items = this.renderNode('/', this.copiedValue, 0)
       return items
+    }
+  },
+  watch: {
+    value: {
+      immediate: true,
+      handler (val) {
+        this.copiedValue = JSON.parse(JSON.stringify(val))
+        console.log(1)
+      }
     }
   },
   methods: {
@@ -42,7 +56,7 @@ export default Vue.extend({
       return items
     },
     onItemClicked (item: TreeItem): void {
-      asarEach(this.value, (n) => {
+      asarEach(this.copiedValue, (n) => {
         this.$set(n, '_active', false)
         if (n === item.data) {
           if (n.files) {
@@ -51,7 +65,6 @@ export default Vue.extend({
           this.$set(n, '_active', true)
         }
       }, '/')
-      this.$emit('input', this.value)
       this.$emit('itemClick', item)
     }
   }
