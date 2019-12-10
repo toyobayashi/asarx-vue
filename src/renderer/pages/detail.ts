@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import { extname, basename } from 'path'
 import { remote } from 'electron'
-import { openFile } from '../utils'
-import { setAsarPath, getters, setTree, clickTree } from '../store/export'
-import Tree from '../components/Tree.vue'
+import { openFile, deepCopy } from '../utils'
+import { setAsarPath, getters, setTree } from '../store/export'
+import Tree from '../components/tree/Tree.vue'
 import fakeHeader from '../mocks/header'
 
 export default Vue.extend({
@@ -52,16 +52,12 @@ export default Vue.extend({
       }
     },
     onItemClicked (item: TreeItem) {
-      // todo
-      clickTree(item.data)
-      // Asar.each(this.tree, (n) => {
-      //   this.$set(n, '_active', false)
-      // }, '/')
-      // if (item.data.files) {
-      //   this.$set(item.data, '_open', !item.data._open)
-      // }
-      // this.$set(item.data, '_active', true)
-      // console.log(item)
+      console.log(JSON.stringify(item, (key, value) => {
+        if (key[0] === '_') {
+          return undefined
+        }
+        return value
+      }, 2))
     },
     async open () {
       const path = await openFile()
@@ -79,7 +75,7 @@ export default Vue.extend({
       // this.props.setTree && this.props.setTree(this._asar.header)
       // this._onItemClicked(this._asar.header)
       // } else {
-      setTree(fakeHeader)
+      setTree(deepCopy(fakeHeader))
       // }
     },
     goback () {
