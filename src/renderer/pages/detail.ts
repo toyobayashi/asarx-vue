@@ -4,19 +4,25 @@ import { remote } from 'electron'
 import { openFile, deepCopy } from '../utils'
 import { setAsarPath, getters, setTree } from '../store/export'
 import Tree from '../components/tree/Tree.vue'
+import FileList from '../components/list/FileList.vue'
 import fakeHeader from '../mocks/header'
 
 export default Vue.extend({
   components: {
-    Tree
+    Tree,
+    FileList
   },
   data () {
     const data: {
       point: null | [number, number]
       treeWidth: number
+      activeDir: string
+      activePath: string
     } = {
       point: null,
-      treeWidth: 200
+      treeWidth: 200,
+      activeDir: '',
+      activePath: ''
     }
     return data
   },
@@ -77,6 +83,18 @@ export default Vue.extend({
       // } else {
       setTree(deepCopy(fakeHeader))
       // }
+    },
+    clearListFocus () {
+      // todo
+    },
+    onDragStart () {
+      // todo
+    },
+    onListItemClicked () {
+      // todo
+    },
+    onListItemDoubleClicked () {
+      // todo
     },
     goback () {
       this.$router.back()

@@ -22,6 +22,7 @@ module.exports = {
     '@typescript-eslint/no-this-alias': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-namespace': 'off',
+    '@typescript-eslint/consistent-type-assertions': 'off',
     'standard/no-callback-literal': 'off',
     '@typescript-eslint/member-delimiter-style': ['error', {
       multiline: {

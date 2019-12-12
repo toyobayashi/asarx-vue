@@ -8,12 +8,17 @@
       <button class="menu-button" @click="openGithub">Github</button>
     </div>
     <div class="content" :class="{ resize: point }" @mousemove="onMouseMove" @mouseup="onMouseUp">
-      <div class="tree-view" :style="{ width: this.treeWidth + 'px' }">
-        <Tree :value="tree" :title="title" :hideFile="false" @itemClick="onItemClicked" />
+      <div class="tree-view" :style="{ width: treeWidth + 'px' }">
+        <Tree v-model="activeDir" :tree="tree" :title="title" :hideFile="false" @itemClick="onItemClicked" />
       </div>
-      <div class="resize" :style="{ left: `${this.treeWidth - 4}px` }" @mousedown="onMouseDown"></div>
+      <div class="list-view" :style="{ width: `calc(100% - ${treeWidth}px)` }" @click="clearListFocus">
+        <FileList v-model="activePath" :tree="tree" :dir="activeDir" @dragstart="onDragStart" @itemclick="onListItemClicked" @itemdoubleclick="onListItemDoubleClicked" />
+      </div>
+      <div class="resize" :style="{ left: `${treeWidth - 4}px` }" @mousedown="onMouseDown"></div>
     </div>
     <div>{{asarPath}}</div>
+    <div>{{activeDir}}</div>
+    <div>{{activePath}}</div>
   </div>
 </template>
 
@@ -45,6 +50,10 @@
 .tree-view
   background-color rgb(243, 243, 243)
   height 100%
+  overflow auto
+  box-sizing border-box
+  border 1px solid #fff
+.list-view
   overflow auto
   box-sizing border-box
   border 1px solid #fff

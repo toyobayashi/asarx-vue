@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { getObjectId } from '../../utils/ipc'
-import { Prop } from 'vue/types/options'
+import { PropValidator } from 'vue/types/options'
 
 export default Vue.extend({
   props: {
@@ -8,13 +8,10 @@ export default Vue.extend({
       type: String,
       default: ''
     },
-    value: {
-      type: Object as Prop<AsarNode>,
-      default: () => {
-        const p: AsarNode = { files: {} }
-        return p
-      }
-    },
+    tree: {
+      type: Object,
+      default: () => ({ files: {} })
+    } as PropValidator<AsarNode>,
     hideFile: {
       type: Boolean,
       default: false
@@ -22,7 +19,7 @@ export default Vue.extend({
   },
   data () {
     return {
-      copiedValue: JSON.parse(JSON.stringify(this.value))
+      copiedValue: JSON.parse(JSON.stringify(this.tree))
     }
   },
   computed: {
@@ -32,7 +29,7 @@ export default Vue.extend({
     }
   },
   watch: {
-    value: {
+    tree: {
       immediate: true,
       handler (val) {
         this.copiedValue = JSON.parse(JSON.stringify(val))
@@ -56,11 +53,12 @@ export default Vue.extend({
       return items
     },
     onItemClicked (item: TreeItem): void {
-      asarEach(this.copiedValue, (n) => {
+      asarEach(this.copiedValue, (n, path) => {
         this.$set(n, '_active', false)
         if (n === item.data) {
           if (n.files) {
             this.$set(n, '_open', !n._open)
+            this.$emit('input', path)
           }
           this.$set(n, '_active', true)
         }
