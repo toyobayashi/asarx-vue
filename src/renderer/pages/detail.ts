@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import { extname, basename } from 'path'
 import { remote } from 'electron'
-import { openFile, deepCopy } from '../utils'
+import { openFile, deepCopy, formatSize } from '../utils'
 import { setAsarPath, getters, setTree } from '../store/export'
 import Tree from '../components/tree/Tree.vue'
 import FileList from '../components/list/FileList.vue'
 import fakeHeader from '../mocks/header'
+import Asar from '../utils/asar'
 
 export default Vue.extend({
   components: {
@@ -30,6 +31,18 @@ export default Vue.extend({
     ...getters,
     title (): string {
       return basename(this.asarPath || '')
+    },
+    asarDetailString (): string {
+      let folders: number = 0
+      let files: number = 0
+      Asar.each(this.tree, (n) => {
+        if (n.files) {
+          folders++
+        } else {
+          files++
+        }
+      })
+      return `Files: ${files}, Folders: ${folders}, Size: ${formatSize((this as any).asarSize || 0) || 'Unknown'}`
     }
   },
   methods: {

@@ -16,9 +16,13 @@
       </div>
       <div class="resize" :style="{ left: `${treeWidth - 4}px` }" @mousedown="onMouseDown"></div>
     </div>
-    <div>{{asarPath}}</div>
+    <div class="footer">
+      <span>{{activeDir}}</span>
+      <span>{{asarDetailString}}</span>
+    </div>
+    <!-- <div>{{asarPath}}</div>
     <div>{{activeDir}}</div>
-    <div>{{activePath}}</div>
+    <div>{{activePath}}</div> -->
   </div>
 </template>
 
@@ -69,4 +73,13 @@
     top 0
 .content.resize
   cursor ew-resize
+.footer
+  height 29px
+  line-height 29px
+  background rgb(240, 240, 240)
+  border-top 1px solid rgb(204, 204, 204)
+  padding 0 5px 0 5px
+  display flex
+  justify-content space-between
+  font-size 14px
 </style>
