@@ -8,10 +8,6 @@ export default Vue.extend({
     FileListItem
   },
   props: {
-    // list: {
-    //   type: Array,
-    //   default: () => []
-    // } as PropValidator<ListItem[]>,
     tree: {
       type: Object,
       default: () => ({ files: {} })
@@ -26,19 +22,16 @@ export default Vue.extend({
     }
   },
   computed: {
-    list (): ListItem[] {
-      const node = getNode(this.tree, this.dir)
-      if (!node || !node.files) return []
-      const files = Object.keys(node.files)
-      const res: ListItem[] = []
-      for (let i = 0; i < files.length; i++) {
-        res.push({
-          node: node.files[files[i]],
-          path: `${this.dir}/${files[i]}`,
-          focused: false
-        })
+  },
+  watch: {
+    tree: {
+      immediate: true,
+      handler (val) {
+        this.computeList(val, this.dir)
       }
-      return res
+    },
+    dir (val) {
+      this.computeList(this.tree, val)
     }
   },
   data () {
@@ -46,14 +39,33 @@ export default Vue.extend({
       point: null | [number, number]
       nameWidth: number
       cdDotDotFocused: boolean
+      list: ListItem[]
     } = {
       nameWidth: 300,
       point: null,
-      cdDotDotFocused: false
+      cdDotDotFocused: false,
+      list: []
     }
     return data
   },
   methods: {
+    computeList (tree: AsarNode, dir: string) {
+      const node = getNode(tree, dir)
+      if (!node || !node.files) {
+        this.list = []
+        return
+      }
+      const files = Object.keys(node.files)
+      const res: ListItem[] = []
+      for (let i = 0; i < files.length; i++) {
+        res.push({
+          node: node.files[files[i]],
+          path: `${dir}/${files[i]}`,
+          focused: false
+        })
+      }
+      this.list = res
+    },
     onMouseMove (e: MouseEvent) {
       if (this.point) {
         const x: number = e.pageX
@@ -81,7 +93,14 @@ export default Vue.extend({
     onItemDoubleClicked (e: any) {
       this.$emit('itemdoubleclick', e)
     },
-    onItemClicked (e: any) {
+    onItemClicked (e: any, item: ListItem) {
+      this.list.forEach((i) => {
+        if (item === i) {
+          i.focused = true
+        } else {
+          i.focused = false
+        }
+      })
       this.$emit('itemclick', e)
     },
     onDragStart (e: any) {

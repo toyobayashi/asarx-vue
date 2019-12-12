@@ -1,5 +1,5 @@
 <template>
-  <div class="content" :class="{ resize: point }" @mousemove="onMouseMove" @mouseup.stop="onMouseUp">
+  <div class="file-list" :class="{ resize: point }" @mousemove="onMouseMove" @mouseup.stop="onMouseUp">
     <FileListItem
       class="head"
       :value="{}"
@@ -17,10 +17,10 @@
         v-for="item in list"
         :key="item.path"
         @doubleclick="onItemDoubleClicked"
-        @click="onItemClicked"
+        @click="onItemClicked($event, item)"
         @dragstart="onDragStart"
         :value="item"
-        class="head"
+        :class="{ focused: item.focused }"
         :columns="[{
           className: 'name-column cell' + (!item.node || item.node.files ? ' folder' : ' file'),
           style: { width: nameWidth + 'px' },
@@ -35,7 +35,7 @@
   </div>
 </template>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .file-list
   width 100%
   font-size 14px
@@ -54,7 +54,7 @@
   margin-top 24px
   height calc(100% - 24px)
   overflow auto
-.file-list >>> .row
+.file-list .row
   display flex
 .file-list .body .row:hover
   background rgb(229, 243, 255)

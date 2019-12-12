@@ -9,7 +9,7 @@
     </div>
     <div class="content" :class="{ resize: point }" @mousemove="onMouseMove" @mouseup="onMouseUp">
       <div class="tree-view" :style="{ width: treeWidth + 'px' }">
-        <Tree v-model="activeDir" :tree="tree" :title="title" :hideFile="false" @itemClick="onItemClicked" />
+        <Tree v-model="activeDir" :tree="tree" :title="title" :hideFile="true" @itemClick="onItemClicked" />
       </div>
       <div class="list-view" :style="{ width: `calc(100% - ${treeWidth}px)` }" @click="clearListFocus">
         <FileList v-model="activePath" :tree="tree" :dir="activeDir" @dragstart="onDragStart" @itemclick="onListItemClicked" @itemdoubleclick="onListItemDoubleClicked" />
