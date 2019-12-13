@@ -8,5 +8,6 @@ declare interface TreeItem {
 declare interface ListItem {
   node: AsarNode | null
   path: string
+  name: string
   focused?: boolean
 }

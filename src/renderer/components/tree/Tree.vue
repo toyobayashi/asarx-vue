@@ -5,9 +5,9 @@
       :key="item.key"
       @click="onItemClicked(item)"
       class="tree-item"
-      :class="{ active: item.data._active, root: item.indent === 0, open: item.data._open, doc: !item.data.files }"
+      :class="{ active: item.key === value, root: item.indent === 0, open: item.data._open, doc: !item.data.files }"
       :style="{ paddingLeft: item.indent ? item.indent + 'px' : void 0 }"
-    >{{item.title}}</div>
+    >{{item.title === '/' ? title : item.title}}</div>
   </div>
 </template>
 

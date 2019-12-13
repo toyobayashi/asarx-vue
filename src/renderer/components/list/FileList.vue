@@ -24,7 +24,7 @@
         :columns="[{
           className: 'name-column cell' + (!item.node || item.node.files ? ' folder' : ' file'),
           style: { width: nameWidth + 'px' },
-          text: item.path === '..' ? '..' : basename(item.path)
+          text: item.name
         }, {
           className: 'size-column cell' + (!item.node || item.node.files ? ' folder' : ' file'),
           style: { width: `calc(100% - ${nameWidth}px)` },

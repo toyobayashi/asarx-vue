@@ -3,6 +3,8 @@ import { PropValidator } from 'vue/types/options'
 import FileListItem from './FileListItem.vue'
 import { formatSize } from '../../utils'
 
+const { basename, dirname, join } = require('electron').remote.require('path').posix
+
 export default Vue.extend({
   components: {
     FileListItem
@@ -17,9 +19,9 @@ export default Vue.extend({
       required: true
     },
     value: {
-      type: String,
-      default: ''
-    }
+      type: Array,
+      default: () => []
+    } as PropValidator<ListItem[]>
   },
   computed: {
   },
@@ -40,15 +42,43 @@ export default Vue.extend({
       nameWidth: number
       cdDotDotFocused: boolean
       list: ListItem[]
+      controlDown: boolean
+      shiftDown: boolean
+      lastClickedItemIndex: number
     } = {
       nameWidth: 300,
       point: null,
       cdDotDotFocused: false,
-      list: []
+      list: [],
+      controlDown: false,
+      shiftDown: false,
+      lastClickedItemIndex: -1
     }
     return data
   },
+  mounted () {
+    document.addEventListener('keydown', this.onKeyDown)
+    document.addEventListener('keyup', this.onKeyUp)
+  },
+  beforeDestroy () {
+    document.removeEventListener('keydown', this.onKeyDown)
+    document.removeEventListener('keyup', this.onKeyUp)
+  },
   methods: {
+    onKeyDown (e: KeyboardEvent) {
+      if (e.key === 'Control') {
+        this.controlDown = true
+      } else if (e.key === 'Shift') {
+        this.shiftDown = true
+      }
+    },
+    onKeyUp (e: KeyboardEvent) {
+      if (e.key === 'Control') {
+        this.controlDown = false
+      } else if (e.key === 'Shift') {
+        this.shiftDown = false
+      }
+    },
     computeList (tree: AsarNode, dir: string) {
       const node = getNode(tree, dir)
       if (!node || !node.files) {
@@ -57,10 +87,20 @@ export default Vue.extend({
       }
       const files = Object.keys(node.files)
       const res: ListItem[] = []
+      if (dir && dir !== '/') {
+        res.push({
+          node: node,
+          path: basename(dir),
+          name: '..',
+          focused: false
+        })
+      }
       for (let i = 0; i < files.length; i++) {
+        const path = join(dir, files[i])
         res.push({
           node: node.files[files[i]],
-          path: `${dir}/${files[i]}`,
+          path: path,
+          name: basename(path),
           focused: false
         })
       }
@@ -90,24 +130,69 @@ export default Vue.extend({
         this.point = [e.pageX, e.pageY]
       }
     },
-    onItemDoubleClicked (e: any) {
-      this.$emit('itemdoubleclick', e)
+    onItemDoubleClicked (e: MouseEvent, data: ListItem) {
+      let path: string
+      if (data.name === '..') {
+        path = dirname(this.dir)
+        this.$emit('update:dir', path)
+      } else if (data.node?.files) {
+        path = data.path
+        this.$emit('update:dir', path)
+      } else {
+        path = data.path
+      }
+      this.$emit('itemdoubleclick', e, data, path)
     },
     onItemClicked (e: any, item: ListItem) {
-      this.list.forEach((i) => {
-        if (item === i) {
-          i.focused = true
-        } else {
-          i.focused = false
+      if (this.shiftDown) {
+        let index = -1
+        for (let i = 0; i < this.list.length; i++) {
+          if (this.list[i] === item) {
+            index = i
+          }
         }
-      })
+
+        if (index !== this.lastClickedItemIndex && this.lastClickedItemIndex !== -1) {
+          const start = index < this.lastClickedItemIndex ? index : this.lastClickedItemIndex
+          const end = index < this.lastClickedItemIndex ? this.lastClickedItemIndex : index
+
+          for (let i = 0; i < this.list.length; i++) {
+            if (i <= end && i >= start) this.list[i].focused = true
+            else this.list[i].focused = false
+          }
+        } else {
+          for (let i = 0; i < this.list.length; i++) {
+            if (this.list[i] === item) {
+              this.list[i].focused = true
+              this.lastClickedItemIndex = i
+            }
+          }
+        }
+      } else if (this.controlDown) {
+        for (let i = 0; i < this.list.length; i++) {
+          if (this.list[i] === item) {
+            this.list[i].focused = !this.list[i].focused
+            this.lastClickedItemIndex = i
+          }
+        }
+      } else {
+        for (let i = 0; i < this.list.length; i++) {
+          if (this.list[i] === item) {
+            this.list[i].focused = true
+            this.lastClickedItemIndex = i
+          } else {
+            this.list[i].focused = false
+          }
+        }
+      }
+      this.$emit('input', this.list.filter(x => (x.focused === true)))
       this.$emit('itemclick', e)
     },
     onDragStart (e: any) {
       this.$emit('dragstart', e)
     },
     basename (p: string): string {
-      return require('electron').remote.require('path').basename(p)
+      return basename(p)
     },
     formatSize (size: number) {
       return formatSize(size)

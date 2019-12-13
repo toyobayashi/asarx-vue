@@ -18,12 +18,12 @@ export default Vue.extend({
       point: null | [number, number]
       treeWidth: number
       activeDir: string
-      activePath: string
+      selectedItems: ListItem[]
     } = {
       point: null,
       treeWidth: 200,
       activeDir: '',
-      activePath: ''
+      selectedItems: []
     }
     return data
   },
@@ -42,7 +42,7 @@ export default Vue.extend({
           files++
         }
       })
-      return `Files: ${files}, Folders: ${folders}, Size: ${formatSize((this as any).asarSize || 0) || 'Unknown'}`
+      return `Files: ${files}, Folders: ${folders - 1}, Size: ${formatSize((this as any).asarSize || 0) || 'Unknown'}`
     }
   },
   methods: {
@@ -95,9 +95,17 @@ export default Vue.extend({
       // this._onItemClicked(this._asar.header)
       // } else {
       setTree(deepCopy(fakeHeader))
+      this.$nextTick(() => {
+        (this.$refs.tree as any).openFolder('/')
+        this.activeDir = '/'
+      })
       // }
     },
     clearListFocus () {
+      this.selectedItems.forEach(item => {
+        item.focused = false
+      })
+      this.selectedItems = []
       // todo
     },
     onDragStart () {
@@ -106,8 +114,10 @@ export default Vue.extend({
     onListItemClicked () {
       // todo
     },
-    onListItemDoubleClicked () {
-      // todo
+    onListItemDoubleClicked (_e: MouseEvent, data: ListItem, path: string) {
+      if (data.node?.files) {
+        (this.$refs.tree as any).openFolder(path)
+      }
     },
     goback () {
       this.$router.back()
