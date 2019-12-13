@@ -6,7 +6,7 @@ import { setAsarPath, getters, setTree } from '../store/export'
 import Tree from '../components/tree/Tree.vue'
 import FileList from '../components/list/FileList.vue'
 import fakeHeader from '../mocks/header'
-import Asar from '../utils/asar'
+import * as Asar from 'asar-class-api'
 
 export default Vue.extend({
   components: {
@@ -19,11 +19,13 @@ export default Vue.extend({
       treeWidth: number
       activeDir: string
       selectedItems: ListItem[]
+      asar: Asar | null
     } = {
       point: null,
       treeWidth: 200,
       activeDir: '',
-      selectedItems: []
+      selectedItems: [],
+      asar: null
     }
     return data
   },
@@ -35,7 +37,7 @@ export default Vue.extend({
     asarDetailString (): string {
       let folders: number = 0
       let files: number = 0
-      Asar.each(this.tree, (n) => {
+      Asar.walk(this.tree as Asar.AsarNodeDirectory, (n: AsarNode) => {
         if (n.files) {
           folders++
         } else {
@@ -70,43 +72,45 @@ export default Vue.extend({
         this.point = [e.pageX, e.pageY]
       }
     },
-    onItemClicked (item: TreeItem) {
-      console.log(JSON.stringify(item, (key, value) => {
-        if (key[0] === '_') {
-          return undefined
-        }
-        return value
-      }, 2))
+    onItemClicked (_item: TreeItem) {
+      // console.log(JSON.stringify(item, (key, value) => {
+      //   if (key[0] === '_') {
+      //     return undefined
+      //   }
+      //   return value
+      // }, 2))
     },
     async open () {
       const path = await openFile()
       if (!path) return
       if (extname(path) === '.asar') {
+        if (this.asar) {
+          this.asar.close()
+          this.asar = null
+        }
         setAsarPath(path)
+        this.asar = Asar.open(path)
         this.readHeader()
       } else {
         alert('Not an asar file.')
       }
     },
     readHeader () {
-      // if (this.asarPath) {
-      // this._asar.load(this.props.asarPath)
-      // this.props.setTree && this.props.setTree(this._asar.header)
-      // this._onItemClicked(this._asar.header)
-      // } else {
-      setTree(deepCopy(fakeHeader))
+      if (this.asar) {
+        setTree(this.asar.getHeader(true))
+      } else {
+        setTree(deepCopy(fakeHeader))
+      }
       this.$nextTick(() => {
         (this.$refs.tree as any).openFolder('/')
         this.activeDir = '/'
       })
-      // }
     },
     clearListFocus () {
       this.selectedItems.forEach(item => {
         item.focused = false
       })
       this.selectedItems = []
-      // todo
     },
     onDragStart () {
       // todo
@@ -123,13 +127,16 @@ export default Vue.extend({
       this.$router.back()
     },
     extractClicked () {
-      // if (!this.props.list) return
-      // const selected = this.props.list.filter((item) => item.focused)
+      if (!this.selectedItems.length) return
       remote.dialog.showOpenDialog({
         properties: ['openDirectory', 'showHiddenFiles', 'createDirectory', 'promptToCreate']
-      }).then(({ filePaths }) => {
-        console.log(filePaths)
-        // await extractItem(this._asar, paths && paths[0], selected, true)
+      }).then(async ({ filePaths }) => {
+        if (!this.asar) return
+        if (filePaths && filePaths[0]) {
+          for (let i = 0; i < this.selectedItems.length; i++) {
+            await this.asar.extract(this.selectedItems[i].path, filePaths[0])
+          }
+        }
       }).catch(err => {
         console.log(err)
       })
@@ -189,7 +196,14 @@ export default Vue.extend({
   },
   mounted () {
     this.$nextTick(() => {
-      // todo
+      if (this.asarPath) {
+        if (this.asar) {
+          this.asar.close()
+          this.asar = null
+        }
+        this.asar = Asar.open(this.asarPath)
+        this.readHeader()
+      }
     })
   }
 })

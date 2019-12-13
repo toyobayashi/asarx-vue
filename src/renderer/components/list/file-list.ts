@@ -95,16 +95,23 @@ export default Vue.extend({
           focused: false
         })
       }
+      const folderItem: ListItem[] = []
+      const fileItem: ListItem[] = []
       for (let i = 0; i < files.length; i++) {
         const path = join(dir, files[i])
-        res.push({
+        const nodeItem = {
           node: node.files[files[i]],
           path: path,
           name: basename(path),
           focused: false
-        })
+        }
+        if (nodeItem.node.files) {
+          folderItem.push(nodeItem)
+        } else {
+          fileItem.push(nodeItem)
+        }
       }
-      this.list = res
+      this.list = [...res, ...folderItem, ...fileItem]
     },
     onMouseMove (e: MouseEvent) {
       if (this.point) {

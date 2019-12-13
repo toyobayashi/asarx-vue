@@ -62,19 +62,16 @@ export default Vue.extend({
         const item = this.renderList[i]
         if (dir.indexOf(item.key) !== -1 && item.data.files) {
           this.$set(item.data, '_open', true)
+          if (dir === item.key) {
+            return
+          }
         }
       }
     },
     onItemClicked (item: TreeItem): void {
-      asarEach(this.copiedValue, (n, path) => {
-        if (n === item.data) {
-          if (n.files) {
-            this.$set(n, '_open', !n._open)
-            this.$emit('input', path)
-          }
-        }
-      }, '/')
-      this.$emit('itemClick', item)
+      this.$set(item.data, '_open', !item.data._open)
+      this.$emit('input', item.key)
+      this.$emit('itemclick', item)
     }
   }
 })
@@ -85,14 +82,4 @@ function resolveArray (arr: any[]): any[] {
     Array.isArray(arr[i]) ? res = [...res, ...resolveArray(arr[i])] : res.push(arr[i])
   }
   return res
-}
-
-function asarEach (node: AsarNode, callback: (node: AsarNode, path: string) => boolean | void, path: string = ''): void {
-  if (!callback(node, path)) {
-    if (node.files) {
-      for (const name in node.files) {
-        asarEach(node.files[name], callback, join(path, name))
-      }
-    }
-  }
 }

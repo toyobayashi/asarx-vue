@@ -9,10 +9,10 @@
     </div>
     <div class="content" :class="{ resize: point }" @mousemove="onMouseMove" @mouseup="onMouseUp">
       <div class="tree-view" :style="{ width: treeWidth + 'px' }">
-        <Tree ref="tree" v-model="activeDir" :tree="tree" :title="title" :hideFile="true" @itemClick="onItemClicked" />
+        <Tree ref="tree" v-model="activeDir" :tree="tree" :title="title" :hideFile="true" />
       </div>
       <div class="list-view" :style="{ width: `calc(100% - ${treeWidth}px)` }" @click="clearListFocus">
-        <FileList v-model="selectedItems" :tree="tree" :dir.sync="activeDir" @dragstart="onDragStart" @itemclick="onListItemClicked" @itemdoubleclick="onListItemDoubleClicked" />
+        <FileList v-model="selectedItems" :tree="tree" :dir.sync="activeDir" @dragstart="onDragStart" @itemdoubleclick="onListItemDoubleClicked" />
       </div>
       <div class="resize" :style="{ left: `${treeWidth - 4}px` }" @mousedown="onMouseDown"></div>
     </div>
