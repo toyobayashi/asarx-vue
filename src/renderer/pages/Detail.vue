@@ -20,6 +20,7 @@
       <span>{{activeDir}}</span>
       <span>{{asarDetailString}}</span>
     </div>
+    <ModalExtract v-if="extractModalShow" :cmax="modal.cmax" :cpos="modal.cpos" :tmax="modal.tmax" :tpos="modal.tpos" :text="modal.text" />
     <!-- <div>{{asarPath}}</div>
     <div>{{activeDir}}</div>
     <div>{{activePath}}</div> -->

@@ -5,13 +5,15 @@ import { openFile, deepCopy, formatSize, showAboutDialog } from '../utils'
 import { setAsarPath, getters, setTree } from '../store/export'
 import Tree from '../components/tree/Tree.vue'
 import FileList from '../components/list/FileList.vue'
+import ModalExtract from '../components/modal/ModalExtract.vue'
 import fakeHeader from '../mocks/header'
 import * as Asar from 'asar-class-api'
 
 export default Vue.extend({
   components: {
     Tree,
-    FileList
+    FileList,
+    ModalExtract
   },
   data () {
     const data: {
@@ -20,12 +22,28 @@ export default Vue.extend({
       activeDir: string
       selectedItems: ListItem[]
       asar: Asar | null
+      extractModalShow: boolean
+      modal: {
+        text: string
+        tmax: number
+        tpos: number
+        cmax: number
+        cpos: number
+      }
     } = {
       point: null,
       treeWidth: 200,
       activeDir: '',
       selectedItems: [],
-      asar: null
+      asar: null,
+      extractModalShow: false,
+      modal: {
+        text: '',
+        tmax: 100,
+        tpos: 75,
+        cmax: 100,
+        cpos: 25
+      }
     }
     return data
   },
@@ -46,6 +64,9 @@ export default Vue.extend({
       })
       return `Files: ${files}, Folders: ${folders - 1}, Size: ${formatSize((this as any).asarSize || 0) || 'Unknown'}`
     }
+  },
+  beforeDestroy () {
+    this.closeAsar()
   },
   methods: {
     onMouseMove (e: MouseEvent) {
